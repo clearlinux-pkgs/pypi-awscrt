@@ -1,0 +1,169 @@
+From 4c45201de7e8b52fb5f254a90aa6cec06f1f41be Mon Sep 17 00:00:00 2001
+From: William Douglas <william.douglas@intel.com>
+Date: Fri, 10 Dec 2021 12:02:43 -0800
+Subject: [PATCH] Don't use werror
+
+---
+ crt/aws-c-common/cmake/AwsCFlags.cmake | 4 ++--
+ crt/aws-checksums/CMakeLists.txt       | 2 +-
+ crt/aws-lc/CMakeLists.txt              | 5 ++---
+ crt/s2n/CMakeLists.txt                 | 6 ++----
+ crt/s2n/crypto/s2n_rsa_signing.c       | 2 +-
+ crt/s2n/s2n.mk                         | 4 ++--
+ setup.py                               | 2 +-
+ 7 files changed, 11 insertions(+), 14 deletions(-)
+
+diff --git a/crt/aws-c-common/cmake/AwsCFlags.cmake b/crt/aws-c-common/cmake/AwsCFlags.cmake
+index 771e117..0452543 100644
+--- a/crt/aws-c-common/cmake/AwsCFlags.cmake
++++ b/crt/aws-c-common/cmake/AwsCFlags.cmake
+@@ -96,7 +96,7 @@ function(aws_set_common_properties target)
+         endif()
+ 
+         if(AWS_WARNINGS_ARE_ERRORS)
+-            list(APPEND AWS_C_FLAGS -Werror)
++            list(APPEND AWS_C_FLAGS )
+         endif()
+ 
+         if(NOT SET_PROPERTIES_NO_WEXTRA)
+@@ -166,7 +166,7 @@ function(aws_set_common_properties target)
+             # some platforms implement htonl family of functions via GNU statement expressions (https://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html)
+             # which generates -Wgnu-statement-expression warning.
+             set(old_flags "${CMAKE_REQUIRED_FLAGS}")
+-            set(CMAKE_REQUIRED_FLAGS "-Wgnu -Werror")
++            set(CMAKE_REQUIRED_FLAGS "-Wgnu ")
+             check_c_source_compiles("
+             #include <netinet/in.h>
+ 
+diff --git a/crt/aws-checksums/CMakeLists.txt b/crt/aws-checksums/CMakeLists.txt
+index bb1cd75..5b0fed9 100644
+--- a/crt/aws-checksums/CMakeLists.txt
++++ b/crt/aws-checksums/CMakeLists.txt
+@@ -83,7 +83,7 @@ if (USE_CPU_EXTENSIONS)
+             )
+         SET_SOURCE_FILES_PROPERTIES(source/arm/crc32c_arm.c PROPERTIES COMPILE_FLAGS -march=armv8-a+crc )
+     elseif ((NOT MSVC) AND AWS_ARCH_ARM32)
+-        set(CMAKE_REQUIRED_FLAGS "-march=armv8-a+crc -Werror")
++        set(CMAKE_REQUIRED_FLAGS "-march=armv8-a+crc ")
+         check_c_source_compiles("
+             #include <arm_acle.h>
+             int main() {
+diff --git a/crt/aws-lc/CMakeLists.txt b/crt/aws-lc/CMakeLists.txt
+index 6df89c0..b457f5f 100644
+--- a/crt/aws-lc/CMakeLists.txt
++++ b/crt/aws-lc/CMakeLists.txt
+@@ -176,7 +176,6 @@ macro(check_compiler file_to_test flag_to_set)
+           RESULT
+           ${CMAKE_BINARY_DIR}
+           SOURCES "${CMAKE_CURRENT_LIST_DIR}/tests/compiler_features_tests/${file_to_test}"
+-          COMPILE_DEFINITIONS "-Werror"
+           OUTPUT_VARIABLE ERROR_MESSAGE)
+   if(RESULT)
+     set(C_CXX_FLAGS "${C_CXX_FLAGS} -D${flag_to_set}")
+@@ -197,7 +196,7 @@ if(GCC OR CLANG)
+   # TODO(CryptoAlg-759): enable '-Wpedantic' if awslc has to follow c99 spec.
+   if(CLANG OR (GCC AND CMAKE_C_COMPILER_VERSION VERSION_GREATER "4.1.2"))
+     # GCC 4.1.2 and below do not support all of these flags or they raise false positives.
+-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden -Wall -Wextra -Wno-unused-parameter -Werror")
++    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fvisibility=hidden -Wall -Wextra -Wno-unused-parameter ")
+     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wunused -Wcomment -Wchar-subscripts -Wuninitialized -Wshadow")
+     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wwrite-strings -Wformat-security -Wunused-result")
+     set(C_CXX_FLAGS "${C_CXX_FLAGS} -Wvla")
+@@ -208,7 +207,7 @@ if(GCC OR CLANG)
+     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-cast-function-type")
+   endif()
+ 
+-  set(C_CXX_FLAGS "${C_CXX_FLAGS} -Werror -Wformat=2 -Wsign-compare -Wmissing-field-initializers -Wwrite-strings")
++  set(C_CXX_FLAGS "${C_CXX_FLAGS}  -Wformat=2 -Wsign-compare -Wmissing-field-initializers -Wwrite-strings")
+   if(MSVC)
+     # clang-cl sets different default warnings than clang. It also treats -Wall
+     # as -Weverything, to match MSVC. Instead -W3 is the alias for -Wall.
+diff --git a/crt/s2n/CMakeLists.txt b/crt/s2n/CMakeLists.txt
+index f58303a..7934f50 100644
+--- a/crt/s2n/CMakeLists.txt
++++ b/crt/s2n/CMakeLists.txt
+@@ -233,7 +233,6 @@ try_compile(
+         FALL_THROUGH_SUPPORTED
+         ${CMAKE_BINARY_DIR}
+         SOURCES "${CMAKE_CURRENT_LIST_DIR}/tests/features/fallthrough.c"
+-        COMPILE_DEFINITIONS "-Werror"
+ )
+ 
+ # Determine if __restrict__ is available
+@@ -241,7 +240,6 @@ try_compile(
+         __RESTRICT__SUPPORTED
+         ${CMAKE_BINARY_DIR}
+         SOURCES "${CMAKE_CURRENT_LIST_DIR}/tests/features/__restrict__.c"
+-        COMPILE_DEFINITIONS "-Werror"
+ )
+ 
+ if(APPLE)
+@@ -286,7 +284,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE -pedantic -std=gnu99 -Wall -Wimpl
+ )
+ 
+ if (UNSAFE_TREAT_WARNINGS_AS_ERRORS)
+-    target_compile_options(${PROJECT_NAME} PRIVATE -Werror )
++    target_compile_options(${PROJECT_NAME} PRIVATE  )
+ endif ()
+ 
+ if(BUILD_TESTING AND BUILD_SHARED_LIBS)
+@@ -545,7 +543,7 @@ if (BUILD_TESTING)
+             target_link_libraries(${benchmark_name} PUBLIC ${PROJECT_NAME} testss2n benchmark::benchmark)
+ 
+             # Based off the flags in tests/benchmark/Makefile
+-            target_compile_options(${benchmark_name} PRIVATE -pedantic -Wall -Werror -Wunused -Wcomment -Wchar-subscripts
++            target_compile_options(${benchmark_name} PRIVATE -pedantic -Wall  -Wunused -Wcomment -Wchar-subscripts
+                     -Wuninitialized -Wshadow -Wcast-qual -Wcast-align -Wwrite-strings -Wno-deprecated-declarations
+                     -Wno-unknown-pragmas -Wformat-security -Wno-missing-braces -fvisibility=hidden -Wno-unreachable-code
+                     -Wno-unused-but-set-variable)
+diff --git a/crt/s2n/crypto/s2n_rsa_signing.c b/crt/s2n/crypto/s2n_rsa_signing.c
+index 7663ec9..94f584d 100644
+--- a/crt/s2n/crypto/s2n_rsa_signing.c
++++ b/crt/s2n/crypto/s2n_rsa_signing.c
+@@ -138,7 +138,7 @@ const EVP_MD* s2n_hash_alg_to_evp_alg(s2n_hash_algorithm alg)
+ }
+ 
+ /* On some versions of OpenSSL, "EVP_PKEY_CTX_set_signature_md()" is just a macro that casts digest_alg to "void*",
+- * which fails to compile when the "-Werror=cast-qual" compiler flag is enabled. So we work around this OpenSSL
++ * which fails to compile when the "=cast-qual" compiler flag is enabled. So we work around this OpenSSL
+  * issue by turning off this compiler check for this one function with a cast through. */
+ static int s2n_evp_pkey_ctx_set_rsa_signature_digest(EVP_PKEY_CTX *ctx, const EVP_MD* digest_alg)
+ {
+diff --git a/crt/s2n/s2n.mk b/crt/s2n/s2n.mk
+index 32b78bd..8efb2c8 100644
+--- a/crt/s2n/s2n.mk
++++ b/crt/s2n/s2n.mk
+@@ -42,7 +42,7 @@ else
+ 	DEFAULT_CFLAGS = -std=c99 -Wcast-qual
+ endif
+ 
+-DEFAULT_CFLAGS += -pedantic -Wall -Werror -Wimplicit -Wunused -Wcomment -Wchar-subscripts -Wuninitialized \
++DEFAULT_CFLAGS += -pedantic -Wall  -Wimplicit -Wunused -Wcomment -Wchar-subscripts -Wuninitialized \
+                  -Wshadow  -Wcast-align -Wwrite-strings -fPIC -Wno-missing-braces\
+                  -D_POSIX_C_SOURCE=200809L -O2 -I$(LIBCRYPTO_ROOT)/include/ \
+                  -I$(S2N_ROOT)/api/ -I$(S2N_ROOT) -Wno-deprecated-declarations -Wno-unknown-pragmas -Wformat-security \
+@@ -164,7 +164,7 @@ ifndef COV_TOOL
+ 	endif
+ endif
+ 
+-try_compile = $(shell cat $(1) | $(CC) -Werror -o tmp.o -xc - > /dev/null 2>&1; echo $$?; rm tmp.o > /dev/null 2>&1)
++try_compile = $(shell cat $(1) | $(CC)  -o tmp.o -xc - > /dev/null 2>&1; echo $$?; rm tmp.o > /dev/null 2>&1)
+ 
+ # Determine if execinfo.h is available
+ TRY_COMPILE_EXECINFO := $(call try_compile,$(S2N_ROOT)/tests/features/execinfo.c)
+diff --git a/setup.py b/setup.py
+index 4be7fc6..d0b0a35 100644
+--- a/setup.py
++++ b/setup.py
+@@ -259,7 +259,7 @@ def awscrt_ext():
+         libraries += ['rt']
+ 
+     if distutils.ccompiler.get_default_compiler() != 'msvc':
+-        extra_compile_args += ['-Wextra', '-Werror', '-Wno-strict-aliasing', '-std=gnu99']
++        extra_compile_args += ['-Wextra', '-Wno-strict-aliasing', '-std=gnu99']
+ 
+     return setuptools.Extension(
+         '_awscrt',
+-- 
+2.34.1
+
