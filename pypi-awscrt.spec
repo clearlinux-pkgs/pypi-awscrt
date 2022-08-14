@@ -4,7 +4,7 @@
 #
 Name     : pypi-awscrt
 Version  : 0.12.6
-Release  : 5
+Release  : 6
 URL      : https://files.pythonhosted.org/packages/6b/5a/2233365de38bee9b1d6e37f2ad18330a8ea0207843653217ff38ddf87527/awscrt-0.12.6.tar.gz
 Source0  : https://files.pythonhosted.org/packages/6b/5a/2233365de38bee9b1d6e37f2ad18330a8ea0207843653217ff38ddf87527/awscrt-0.12.6.tar.gz
 Summary  : A common runtime for AWS Python projects
