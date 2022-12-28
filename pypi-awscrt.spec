@@ -4,7 +4,7 @@
 #
 Name     : pypi-awscrt
 Version  : 0.12.6
-Release  : 11
+Release  : 12
 URL      : https://files.pythonhosted.org/packages/6b/5a/2233365de38bee9b1d6e37f2ad18330a8ea0207843653217ff38ddf87527/awscrt-0.12.6.tar.gz
 Source0  : https://files.pythonhosted.org/packages/6b/5a/2233365de38bee9b1d6e37f2ad18330a8ea0207843653217ff38ddf87527/awscrt-0.12.6.tar.gz
 Summary  : A common runtime for AWS Python projects
@@ -19,6 +19,9 @@ BuildRequires : boto3-python
 BuildRequires : buildreq-cmake
 BuildRequires : buildreq-distutils3
 BuildRequires : pkgconfig(libunwind-generic)
+# Suppress stripping binaries
+%define __strip /bin/true
+%define debug_package %{nil}
 Patch1: 0001-Don-t-use-werror.patch
 
 %description
@@ -84,15 +87,15 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1656358805
+export SOURCE_DATE_EPOCH=1672257340
 export GCC_IGNORE_WERROR=1
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
 export NM=gcc-nm
-export CFLAGS="$CFLAGS -O3 -ffat-lto-objects -flto=auto "
-export FCFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=auto "
-export FFLAGS="$FFLAGS -O3 -ffat-lto-objects -flto=auto "
-export CXXFLAGS="$CXXFLAGS -O3 -ffat-lto-objects -flto=auto "
+export CFLAGS="$CFLAGS -O3 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -g1 -gno-column-info -gno-variable-location-views -gz "
+export FCFLAGS="$FFLAGS -O3 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -g1 -gno-column-info -gno-variable-location-views -gz "
+export FFLAGS="$FFLAGS -O3 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -g1 -gno-column-info -gno-variable-location-views -gz "
+export CXXFLAGS="$CXXFLAGS -O3 -fdebug-types-section -femit-struct-debug-baseonly -ffat-lto-objects -flto=auto -g1 -gno-column-info -gno-variable-location-views -gz "
 export MAKEFLAGS=%{?_smp_mflags}
 python3 setup.py build
 
@@ -109,28 +112,28 @@ popd
 export MAKEFLAGS=%{?_smp_mflags}
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/pypi-awscrt
-cp %{_builddir}/awscrt-0.12.6/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/awscrt-0.12.6/crt/aws-c-auth/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/awscrt-0.12.6/crt/aws-c-auth/NOTICE %{buildroot}/usr/share/package-licenses/pypi-awscrt/f0c158657d79888c4e766cfb01c16e47cbd41ee1
-cp %{_builddir}/awscrt-0.12.6/crt/aws-c-cal/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/57aed0b0f74e63f6b85cce11bce29ba1710b422b
-cp %{_builddir}/awscrt-0.12.6/crt/aws-c-common/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/awscrt-0.12.6/crt/aws-c-compression/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/awscrt-0.12.6/crt/aws-c-event-stream/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/awscrt-0.12.6/crt/aws-c-event-stream/NOTICE %{buildroot}/usr/share/package-licenses/pypi-awscrt/900859209a64230c0ebc769371ab73fb1eaf0312
-cp %{_builddir}/awscrt-0.12.6/crt/aws-c-http/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/awscrt-0.12.6/crt/aws-c-io/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/awscrt-0.12.6/crt/aws-c-mqtt/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/2b8b815229aa8a61e483fb4ba0588b8b6c491890
-cp %{_builddir}/awscrt-0.12.6/crt/aws-c-mqtt/NOTICE %{buildroot}/usr/share/package-licenses/pypi-awscrt/01d52ece533bea230977c4dfb958f2b51084b839
-cp %{_builddir}/awscrt-0.12.6/crt/aws-c-s3/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/57aed0b0f74e63f6b85cce11bce29ba1710b422b
-cp %{_builddir}/awscrt-0.12.6/crt/aws-c-sdkutils/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/57aed0b0f74e63f6b85cce11bce29ba1710b422b
-cp %{_builddir}/awscrt-0.12.6/crt/aws-checksums/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/92170cdc034b2ff819323ff670d3b7266c8bffcd
-cp %{_builddir}/awscrt-0.12.6/crt/aws-lc/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/a61a01065ae3a3bbf67bcd6f24d1cea6d410a83d
-cp %{_builddir}/awscrt-0.12.6/crt/aws-lc/third_party/fiat/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/b71c498e7e934dcfb176710d4f42e18b9e86fe85
-cp %{_builddir}/awscrt-0.12.6/crt/s2n/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/d22ee0b5d7dff4c54d798810ccc79e9b5c3b62ea
-cp %{_builddir}/awscrt-0.12.6/crt/s2n/pq-crypto/bike_r1/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/1128f8f91104ba9ef98d37eea6523a888dcfa5de
-cp %{_builddir}/awscrt-0.12.6/crt/s2n/pq-crypto/bike_r2/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/1128f8f91104ba9ef98d37eea6523a888dcfa5de
-cp %{_builddir}/awscrt-0.12.6/crt/s2n/pq-crypto/bike_r3/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/1128f8f91104ba9ef98d37eea6523a888dcfa5de
-cp %{_builddir}/awscrt-0.12.6/crt/s2n/pq-crypto/sike_r1/LICENSE.txt %{buildroot}/usr/share/package-licenses/pypi-awscrt/97c3ec6ae8c55b815274d2dda7f378b27146ad7d
+cp %{_builddir}/awscrt-%{version}/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/awscrt-%{version}/crt/aws-c-auth/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/awscrt-%{version}/crt/aws-c-auth/NOTICE %{buildroot}/usr/share/package-licenses/pypi-awscrt/f0c158657d79888c4e766cfb01c16e47cbd41ee1 || :
+cp %{_builddir}/awscrt-%{version}/crt/aws-c-cal/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/57aed0b0f74e63f6b85cce11bce29ba1710b422b || :
+cp %{_builddir}/awscrt-%{version}/crt/aws-c-common/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/awscrt-%{version}/crt/aws-c-compression/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/awscrt-%{version}/crt/aws-c-event-stream/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/awscrt-%{version}/crt/aws-c-event-stream/NOTICE %{buildroot}/usr/share/package-licenses/pypi-awscrt/900859209a64230c0ebc769371ab73fb1eaf0312 || :
+cp %{_builddir}/awscrt-%{version}/crt/aws-c-http/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/awscrt-%{version}/crt/aws-c-io/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/awscrt-%{version}/crt/aws-c-mqtt/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/2b8b815229aa8a61e483fb4ba0588b8b6c491890 || :
+cp %{_builddir}/awscrt-%{version}/crt/aws-c-mqtt/NOTICE %{buildroot}/usr/share/package-licenses/pypi-awscrt/01d52ece533bea230977c4dfb958f2b51084b839 || :
+cp %{_builddir}/awscrt-%{version}/crt/aws-c-s3/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/57aed0b0f74e63f6b85cce11bce29ba1710b422b || :
+cp %{_builddir}/awscrt-%{version}/crt/aws-c-sdkutils/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/57aed0b0f74e63f6b85cce11bce29ba1710b422b || :
+cp %{_builddir}/awscrt-%{version}/crt/aws-checksums/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/92170cdc034b2ff819323ff670d3b7266c8bffcd || :
+cp %{_builddir}/awscrt-%{version}/crt/aws-lc/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/a61a01065ae3a3bbf67bcd6f24d1cea6d410a83d || :
+cp %{_builddir}/awscrt-%{version}/crt/aws-lc/third_party/fiat/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/b71c498e7e934dcfb176710d4f42e18b9e86fe85 || :
+cp %{_builddir}/awscrt-%{version}/crt/s2n/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/d22ee0b5d7dff4c54d798810ccc79e9b5c3b62ea || :
+cp %{_builddir}/awscrt-%{version}/crt/s2n/pq-crypto/bike_r1/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/1128f8f91104ba9ef98d37eea6523a888dcfa5de || :
+cp %{_builddir}/awscrt-%{version}/crt/s2n/pq-crypto/bike_r2/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/1128f8f91104ba9ef98d37eea6523a888dcfa5de || :
+cp %{_builddir}/awscrt-%{version}/crt/s2n/pq-crypto/bike_r3/LICENSE %{buildroot}/usr/share/package-licenses/pypi-awscrt/1128f8f91104ba9ef98d37eea6523a888dcfa5de || :
+cp %{_builddir}/awscrt-%{version}/crt/s2n/pq-crypto/sike_r1/LICENSE.txt %{buildroot}/usr/share/package-licenses/pypi-awscrt/97c3ec6ae8c55b815274d2dda7f378b27146ad7d || :
 python3 -tt setup.py build  install --root=%{buildroot}
 echo ----[ mark ]----
 cat %{buildroot}/usr/lib/python3*/site-packages/*/requires.txt || :
